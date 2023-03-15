@@ -17,6 +17,21 @@ public:
 		this->rows = rows;
 		this->cols = cols;
 	}
+	Table(const Table<T>& t) {
+		rows = t.rows;
+		cols = t.cols;
+
+		table = new T * [rows];
+		for (int i = 0; i < rows; ++i) {
+			table[i] = new T[cols];
+		}
+
+		for (int i = 0; i < rows; ++i) {
+			for (int j = 0; j < cols; ++j) {
+				table[i][j] = t.table[i][j];
+			}
+		}
+	}
 	~Table() {
 		for (int i = 0; i < rows; ++i) {
 			delete[] table[i];
@@ -36,22 +51,24 @@ public:
 	int Size() { return rows; }
 
 	Table<T>& operator=(const Table<T>& t) {
-		for (int i = 0; i < rows; ++i) {
-			delete[] table[i];
-		}
-		delete[] table;
+		if (&t != this) {
+			for (int i = 0; i < rows; ++i) {
+				delete[] table[i];
+			}
+			delete[] table;
 
-		rows = t.rows;
-		cols = t.cols;
+			rows = t.rows;
+			cols = t.cols;
 
-		table = new T* [rows];
-		for (int i = 0; i < rows; ++i) {
-			table[i] = new T[cols];
-		}
+			table = new T * [rows];
+			for (int i = 0; i < rows; ++i) {
+				table[i] = new T[cols];
+			}
 
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
-				table[i][j] = t.table[i][j];
+			for (int i = 0; i < rows; ++i) {
+				for (int j = 0; j < cols; ++j) {
+					table[i][j] = t.table[i][j];
+				}
 			}
 		}
 		return *this;
@@ -66,8 +83,10 @@ int main()
 		std::cout << table1[0][0]<<'\n';
 		auto table2 = Table<int>(2, 3);
 		table2[0][0] = 10;
+		table1 = table1;
 		table1 = table2;
-		std::cout << table1[0][0];
+		Table<int> table3(table2);
+		std::cout << table3[0][0];
 	}
 	catch (const std::exception& ex) {
 		std::cout << ex.what();
